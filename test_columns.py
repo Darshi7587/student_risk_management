@@ -12,7 +12,7 @@ print(f"\n✓ Loaded {len(df):,} records")
 # Check required columns
 required_cols = [
     'student_id', 'department', 'age', 'attendance_rate', 'cgpa',
-    'past_failures', 'disengaged', 'study_hours_per_week',
+    'past_failures', 'dropout', 'study_hours_per_week',
     'assignments_submitted', 'projects_completed', 'sports_participation'
 ]
 
@@ -33,7 +33,7 @@ else:
     print(f"\n✅ All required columns present!")
     print(f"\nDataset summary:")
     print(f"  Total students: {len(df):,}")
-    print(f"  At risk: {df['disengaged'].sum():,} ({df['disengaged'].mean()*100:.1f}%)")
+    print(f"  At risk: {df['dropout'].sum():,} ({df['dropout'].mean()*100:.1f}%)")
     print(f"  Avg attendance: {df['attendance_rate'].mean():.1f}%")
     print(f"  Avg CGPA: {df['cgpa'].mean():.2f}")
     print(f"  Departments: {df['department'].nunique()}")

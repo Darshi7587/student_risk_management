@@ -54,12 +54,13 @@ risk_score = risk_score / risk_score.max()
 risk_score = risk_score + np.random.normal(0, 0.05, num_students)
 risk_score = np.clip(risk_score, 0, 1)
 
-df['disengaged'] = (risk_score > 0.55).astype(int)
+# 'disengaged' legacy column removed; use 'dropout' as canonical target
+df['dropout'] = (risk_score > 0.55).astype(int)
 df['risk_score'] = risk_score
 
 output_path = RAW_DATA_PATH / 'student_data.csv'
 df.to_csv(output_path, index=False)
 
 print(f"✓ Generated {len(df)} student records")
-print(f"✓ At-risk students: {df['disengaged'].sum()} ({df['disengaged'].mean()*100:.1f}%)")
+print(f"✓ At-risk students: {df['dropout'].sum()} ({df['dropout'].mean()*100:.1f}%)")
 print(f"✓ Saved to: {output_path}")

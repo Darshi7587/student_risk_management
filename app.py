@@ -104,19 +104,35 @@ st.markdown("""
     .metric-card {
         background: rgba(30, 41, 59, 0.7) !important;
         backdrop-filter: blur(16px) saturate(180%);
-        padding: 2rem;
+        padding: 1.5rem !important;
         border-radius: 20px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 
                     inset 0 1px 0 rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(139, 92, 246, 0.2);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         margin: 1rem 0;
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+        display: block;
+        min-height: 120px;
     }
     
     .metric-card:hover {
         transform: translateY(-8px) scale(1.02);
         box-shadow: 0 16px 48px rgba(139, 92, 246, 0.3);
         border-color: rgba(139, 92, 246, 0.5);
+        z-index: 2;
+    }
+    
+    /* Fix metric containers inside cards */
+    .metric-card > div {
+        background: transparent !important;
+    }
+    
+    .metric-card [data-testid="stMetric"] {
+        background: transparent !important;
+        padding: 0 !important;
     }
     
     /* Gradient text - Vibrant */
@@ -143,7 +159,6 @@ st.markdown("""
         font-size: 2.5rem !important;
         font-weight: 800 !important;
         color: #8b5cf6 !important;
-        color: #1e293b;
     }
     
     [data-testid="stMetricLabel"] {
@@ -165,6 +180,10 @@ st.markdown("""
     }
     
     [data-testid="stHorizontalBlock"] {
+        background: transparent !important;
+    }
+    
+    [data-testid="column"] {
         background: transparent !important;
     }
     
@@ -196,18 +215,46 @@ st.markdown("""
     .stSelectbox>div>div>div,
     .stNumberInput>div>div>input,
     .stSlider>div>div>div {
-        background: rgba(30, 41, 59, 0.5) !important;
+        background: rgba(30, 41, 59, 0.8) !important;
         border: 2px solid rgba(139, 92, 246, 0.3) !important;
         border-radius: 10px !important;
         color: #e2e8f0 !important;
         padding: 0.75rem !important;
         font-size: 1rem;
+        font-weight: 500;
     }
     
     .stTextInput>div>div>input:focus,
     .stSelectbox>div>div>div:focus {
         border-color: #8b5cf6 !important;
         box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2) !important;
+        outline: none !important;
+    }
+    
+    /* Selectbox dropdown */
+    [data-baseweb="select"] {
+        background: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    [data-baseweb="select"] > div {
+        background: rgba(30, 41, 59, 0.8) !important;
+        border-color: rgba(139, 92, 246, 0.3) !important;
+        color: #e2e8f0 !important;
+    }
+    
+    /* Dropdown menu */
+    [role="listbox"] {
+        background: rgba(30, 41, 59, 0.95) !important;
+        border: 1px solid rgba(139, 92, 246, 0.3) !important;
+    }
+    
+    [role="option"] {
+        background: transparent !important;
+        color: #e2e8f0 !important;
+    }
+    
+    [role="option"]:hover {
+        background: rgba(139, 92, 246, 0.2) !important;
     }
     
     /* Labels */
@@ -215,6 +262,7 @@ st.markdown("""
         color: #e2e8f0 !important;
         font-weight: 600 !important;
         font-size: 0.95rem !important;
+        margin-bottom: 0.5rem !important;
     }
     
     /* Risk badges - Animated */
@@ -351,21 +399,21 @@ def create_gauge_chart(value, title="Risk Score"):
         mode="gauge+number+delta",
         value=value * 100,
         domain={'x': [0, 1], 'y': [0, 1]},
-        title={'text': title, 'font': {'size': 24, 'color': '#1e293b', 'family': 'Arial Black'}},
-        number={'suffix': "%", 'font': {'size': 40, 'color': '#1e293b'}},
+        title={'text': title, 'font': {'size': 24, 'color': '#e2e8f0', 'family': 'Arial Black'}},
+        number={'suffix': "%", 'font': {'size': 40, 'color': '#e2e8f0'}},
         gauge={
             'axis': {'range': [None, 100], 'tickwidth': 2, 'tickcolor': "#cbd5e1"},
-            'bar': {'color': "#667eea", 'thickness': 0.75},
-            'bgcolor': "white",
+            'bar': {'color': "#8b5cf6", 'thickness': 0.75},
+            'bgcolor': "rgba(30, 41, 59, 0.5)",
             'borderwidth': 2,
-            'bordercolor': "#e2e8f0",
+            'bordercolor': "rgba(139, 92, 246, 0.3)",
             'steps': [
-                {'range': [0, 30], 'color': 'rgba(16, 185, 129, 0.2)'},
-                {'range': [30, 60], 'color': 'rgba(245, 158, 11, 0.2)'},
-                {'range': [60, 100], 'color': 'rgba(239, 68, 68, 0.2)'}
+                {'range': [0, 30], 'color': 'rgba(16, 185, 129, 0.3)'},
+                {'range': [30, 60], 'color': 'rgba(245, 158, 11, 0.3)'},
+                {'range': [60, 100], 'color': 'rgba(239, 68, 68, 0.3)'}
             ],
             'threshold': {
-                'line': {'color': "red", 'width': 4},
+                'line': {'color': "#ef4444", 'width': 4},
                 'thickness': 0.75,
                 'value': 60
             }
@@ -375,13 +423,208 @@ def create_gauge_chart(value, title="Risk Score"):
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font={'family': "Arial"},
+        font={'family': "Arial", 'color': '#e2e8f0'},
         height=300,
         margin=dict(l=20, r=20, t=60, b=20)
     )
     return fig
 
+def process_uploaded_data(uploaded_file, model, scaler, features):
+    """Process uploaded Excel or CSV file and make predictions"""
+    try:
+        # Read the uploaded file
+        if uploaded_file.name.endswith('.csv'):
+            df_new = pd.read_csv(uploaded_file)
+        else:
+            df_new = pd.read_excel(uploaded_file)
+        
+        # Store original data
+        df_original = df_new.copy()
+        
+        # Expected columns from raw data (dropout is not required - we will predict it)
+        expected_cols = ['student_id', 'gender', 'department', 'scholarship', 'parental_education',
+                        'extra_curricular', 'age', 'cgpa', 'attendance_rate', 'family_income',
+                        'past_failures', 'study_hours_per_week', 'assignments_submitted', 
+                        'projects_completed', 'total_activities', 'sports_participation']
+        
+        missing_cols = [col for col in expected_cols if col not in df_new.columns]
+        if missing_cols:
+            return None, f"Missing required columns: {', '.join(missing_cols)}", None
+        
+        # Ensure all columns are the correct type
+        df_new['student_id'] = df_new['student_id'].astype(str)
+        df_new['gender'] = df_new['gender'].astype(str)
+        df_new['department'] = df_new['department'].astype(str)
+        df_new['scholarship'] = df_new['scholarship'].astype(str)
+        df_new['parental_education'] = df_new['parental_education'].astype(str)
+        df_new['sports_participation'] = df_new['sports_participation'].astype(str)
+        
+        # Ensure numeric columns
+        numeric_cols = ['extra_curricular', 'age', 'cgpa', 'attendance_rate', 'family_income',
+                       'past_failures', 'study_hours_per_week', 'assignments_submitted', 
+                       'projects_completed', 'total_activities']
+        for col in numeric_cols:
+            df_new[col] = pd.to_numeric(df_new[col], errors='coerce')
+        
+        # ===== EXACT PREPROCESSING FROM preprocess.py =====
+        
+        # Standardize gender (EXACT same logic)
+        df_new['gender'] = df_new['gender'].str.upper().replace({'M': 'Male', 'FEMALE': 'Female', 'NA': 'Other', 'NAN': 'Other'})
+        df_new['gender'] = df_new['gender'].fillna('Other')
+        
+        # Standardize department
+        df_new['department'] = df_new['department'].str.upper()
+        df_new['department'] = df_new['department'].fillna('UNKNOWN')
+        
+        # Standardize scholarship (EXACT same logic)
+        df_new['scholarship'] = df_new['scholarship'].str.upper().replace({'Y': 'Yes', 'N': 'No', 'NOPE': 'No', 'NAN': 'No'})
+        df_new['scholarship'] = df_new['scholarship'].fillna('No')
+        df_new['scholarship_binary'] = (df_new['scholarship'] == 'Yes').astype(int)
+        
+        # Standardize sports participation (EXACT same logic)
+        df_new['sports_participation'] = df_new['sports_participation'].str.upper().replace({'Y': 'Yes', 'N': 'No', 'NAN': 'No'})
+        df_new['sports_participation'] = df_new['sports_participation'].fillna('No')
+        df_new['sports_binary'] = (df_new['sports_participation'] == 'Yes').astype(int)
+        
+        # Handle parental education
+        df_new['parental_education'] = df_new['parental_education'].fillna('Unknown')
+        df_new['parental_education'] = df_new['parental_education'].replace({'nan': 'Unknown', 'NA': 'Unknown', 'NAN': 'Unknown'})
+        
+        # Fill numeric missing values with median (or 0 if all values are NaN)
+        for col in numeric_cols:
+            median_val = df_new[col].median()
+            df_new[col] = df_new[col].fillna(median_val if not pd.isna(median_val) else 0)
+        
+        # Handle outliers in family_income (negative values)
+        df_new['family_income'] = df_new['family_income'].abs()
+        
+        # ===== FEATURE ENGINEERING - MATCH train_model.py EXACTLY =====
+        
+        # Risk flags
+        df_new['low_attendance'] = (df_new['attendance_rate'] < 70).astype(int)
+        df_new['low_cgpa'] = (df_new['cgpa'] < 5.0).astype(int)
+        df_new['high_failures'] = (df_new['past_failures'] > 3).astype(int)
+        df_new['low_study_hours'] = (df_new['study_hours_per_week'] < 10).astype(int)
+        
+        # Interaction features
+        df_new['cgpa_attendance_interaction'] = df_new['cgpa'] * df_new['attendance_rate']
+        df_new['study_cgpa_ratio'] = df_new['study_hours_per_week'] / (df_new['cgpa'] + 0.1)
+        df_new['assignment_completion_rate'] = df_new['assignments_submitted'] / 50.0
+        df_new['academic_performance_score'] = (df_new['cgpa'] * 10 + df_new['attendance_rate']) / 2
+        
+        # Engagement score (different from preprocess.py!)
+        df_new['engagement_score'] = (
+            df_new['sports_binary'] +
+            (df_new['extra_curricular'] / 5.0)
+        )
+        
+        # Risk score composite
+        df_new['risk_score'] = (
+            df_new['low_attendance'] * 3 +
+            df_new['low_cgpa'] * 3 +
+            df_new['high_failures'] * 2 +
+            df_new['low_study_hours'] * 1
+        )
+        
+        # Polynomial features
+        df_new['cgpa_squared'] = df_new['cgpa'] ** 2
+        df_new['attendance_squared'] = df_new['attendance_rate'] ** 2
+        
+        # Categorical binning
+        df_new['income_bracket'] = pd.cut(df_new['family_income'], 
+                                          bins=[0, 25000, 50000, 75000, 1000000],
+                                          labels=['Low', 'Medium', 'High', 'Very High'])
+        df_new['age_group'] = pd.cut(df_new['age'], 
+                                      bins=[15, 18, 21, 25, 100],
+                                      labels=['Teen', 'Young Adult', 'Adult', 'Mature'])
+        
+        # Handle NaN values from pd.cut (values outside bins)
+        df_new['income_bracket'] = df_new['income_bracket'].fillna('Medium')
+        df_new['age_group'] = df_new['age_group'].fillna('Young Adult')
+        
+        # Convert to string to ensure consistency with label encoders
+        df_new['income_bracket'] = df_new['income_bracket'].astype(str)
+        df_new['age_group'] = df_new['age_group'].astype(str)
+        
+        # Use the SAVED label encoders from training (critical for consistency)
+        # Encode ALL 8 categorical columns IN-PLACE to match train_model.py
+        try:
+            label_encoders = joblib.load(MODEL_DIR / 'label_encoders.pkl')
+            
+            # List of all categorical columns that need encoding (from train_model.py)
+            categorical_cols = ['gender', 'department', 'scholarship', 'parental_education',
+                               'extra_curricular', 'sports_participation', 'income_bracket', 'age_group']
+            
+            for col in categorical_cols:
+                if col in df_new.columns and col in label_encoders:
+                    # Convert to string to handle any type mismatches
+                    df_new[col] = df_new[col].astype(str)
+                    
+                    # Get known classes from the saved encoder
+                    known_classes = set(label_encoders[col].classes_)
+                    
+                    # Map unseen values to the first known class (fallback)
+                    fallback_value = label_encoders[col].classes_[0]
+                    df_new[col] = df_new[col].apply(lambda x: x if x in known_classes else fallback_value)
+                    
+                    # Transform in-place (no _encoded suffix)
+                    df_new[col] = label_encoders[col].transform(df_new[col])
+        except Exception as enc_error:
+            # Fallback: fit new encoders if saved ones aren't available (NOT recommended)
+            st.warning(f"⚠️ Could not load saved encoders: {enc_error}. Using fallback encoding (predictions may be less accurate).")
+            from sklearn.preprocessing import LabelEncoder
+            
+            categorical_cols = ['gender', 'department', 'scholarship', 'parental_education',
+                               'extra_curricular', 'sports_participation', 'income_bracket', 'age_group']
+            
+            for col in categorical_cols:
+                if col in df_new.columns:
+                    le = LabelEncoder()
+                    df_new[col] = df_new[col].astype(str)
+                    df_new[col] = le.fit_transform(df_new[col])
+        
+        # Prepare features for prediction (use the same feature columns as training)
+        X_new = df_new[features].copy()
+        
+        # CRITICAL: Fill any remaining NaN values before scaling
+        # This handles edge cases from feature engineering
+        X_new = X_new.fillna(X_new.median())
+        
+        # Scale features
+        X_new_scaled = scaler.transform(X_new)
+        
+        # Make predictions
+        predictions = model.predict(X_new_scaled)
+        prediction_proba = model.predict_proba(X_new_scaled)[:, 1]
+        
+        # Add predictions (store under 'dropout' to match training target)
+        df_new['dropout'] = predictions
+        df_new['risk_probability'] = prediction_proba
+        
+        # Calculate statistics for verification
+        stats = {
+            'total_students': len(df_new),
+            'at_risk': int(predictions.sum()),
+            'safe': int(len(predictions) - predictions.sum()),
+            'avg_risk_probability': float(prediction_proba.mean()),
+            'high_risk_count': int((prediction_proba >= 0.6).sum()),
+            'medium_risk_count': int(((prediction_proba >= 0.3) & (prediction_proba < 0.6)).sum()),
+            'low_risk_count': int((prediction_proba < 0.3).sum())
+        }
+        
+        return df_new, None, stats
+    except Exception as e:
+        import traceback
+        error_detail = traceback.format_exc()
+        return None, str(e) + "\n\nDetails:\n" + error_detail, None
+
 # ==================== SIDEBAR ====================
+
+# Initialize session state for uploaded data
+if 'uploaded_df' not in st.session_state:
+    st.session_state.uploaded_df = None
+if 'data_source' not in st.session_state:
+    st.session_state.data_source = 'default'
 
 with st.sidebar:
     st.markdown("""
@@ -409,7 +652,15 @@ with st.sidebar:
             <h3 style='color: white; margin-top: 0;'>System Status</h3>
     """, unsafe_allow_html=True)
     
-    model, df, scaler, features = load_model_and_data()
+    model, df_default, scaler, features = load_model_and_data()
+    
+    # Use uploaded data if available, otherwise use default
+    if st.session_state.data_source == 'uploaded' and st.session_state.uploaded_df is not None:
+        df = st.session_state.uploaded_df
+        data_label = "📤 Uploaded Data"
+    else:
+        df = df_default
+        data_label = "📊 Default Data"
     
     if model is not None:
         st.success("✓ Model Active")
@@ -418,6 +669,7 @@ with st.sidebar:
     
     if df is not None:
         st.success(f"✓ {len(df)} Students Loaded")
+        st.info(data_label)
     else:
         st.warning("! Run setup first")
     
@@ -432,7 +684,13 @@ with st.sidebar:
                 <h4 style='color: white; margin-top: 0;'>Quick Stats</h4>
         """, unsafe_allow_html=True)
         
-        at_risk = df['disengaged'].sum() if 'disengaged' in df.columns else 0
+        # Ensure consistent target column name 'dropout' (preferred). If older 'disengaged' exists, map it.
+        if 'dropout' not in df.columns:
+            if 'disengaged' in df.columns:
+                df['dropout'] = df['disengaged']
+            else:
+                df['dropout'] = 0
+        at_risk = int(df['dropout'].sum())
         st.metric("At Risk Today", f"{at_risk}", f"{(at_risk/len(df)*100):.1f}%")
         
         st.markdown("</div>", unsafe_allow_html=True)
@@ -449,34 +707,62 @@ if page == "🏠 Dashboard":
         col1, col2, col3, col4, col5 = st.columns(5)
         
         total = len(df)
-        at_risk = df['disengaged'].sum()
+        at_risk = int(df['dropout'].sum())
         avg_attendance = df['attendance_rate'].mean()
         avg_gpa = df['cgpa'].mean()
         
+        # KPI Cards with custom HTML metrics
         with col1:
-            st.markdown('<div class="metric-card fade-in">', unsafe_allow_html=True)
-            st.metric("Total Students", f"{total:,}", help="Total enrolled students")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown(f'''
+                <div class="metric-card fade-in">
+                    <div style="text-align: center;">
+                        <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">TOTAL STUDENTS</p>
+                        <h2 style="color: #8b5cf6; font-size: 2.5rem; font-weight: 800; margin: 0;">{total:,}</h2>
+                    </div>
+                </div>
+            ''', unsafe_allow_html=True)
         
         with col2:
-            st.markdown('<div class="metric-card fade-in">', unsafe_allow_html=True)
-            st.metric("At Risk", f"{at_risk}", f"{(at_risk/total*100):.1f}%", delta_color="inverse")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown(f'''
+                <div class="metric-card fade-in">
+                    <div style="text-align: center;">
+                        <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">AT RISK</p>
+                        <h2 style="color: #8b5cf6; font-size: 2.5rem; font-weight: 800; margin: 0;">{at_risk}</h2>
+                        <p style="color: #ef4444; font-size: 0.9rem; font-weight: 600; margin-top: 0.5rem;">↑ {(at_risk/total*100):.1f}%</p>
+                    </div>
+                </div>
+            ''', unsafe_allow_html=True)
         
         with col3:
-            st.markdown('<div class="metric-card fade-in">', unsafe_allow_html=True)
-            st.metric("Safe", f"{total-at_risk}", f"{((total-at_risk)/total*100):.1f}%")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown(f'''
+                <div class="metric-card fade-in">
+                    <div style="text-align: center;">
+                        <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">SAFE</p>
+                        <h2 style="color: #8b5cf6; font-size: 2.5rem; font-weight: 800; margin: 0;">{total-at_risk}</h2>
+                        <p style="color: #10b981; font-size: 0.9rem; font-weight: 600; margin-top: 0.5rem;">↑ {((total-at_risk)/total*100):.1f}%</p>
+                    </div>
+                </div>
+            ''', unsafe_allow_html=True)
         
         with col4:
-            st.markdown('<div class="metric-card fade-in">', unsafe_allow_html=True)
-            st.metric("Avg Attendance", f"{avg_attendance:.1f}%")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown(f'''
+                <div class="metric-card fade-in">
+                    <div style="text-align: center;">
+                        <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">AVG ATTENDANCE</p>
+                        <h2 style="color: #8b5cf6; font-size: 2.5rem; font-weight: 800; margin: 0;">{avg_attendance:.1f}%</h2>
+                    </div>
+                </div>
+            ''', unsafe_allow_html=True)
         
         with col5:
-            st.markdown('<div class="metric-card fade-in">', unsafe_allow_html=True)
-            st.metric("Avg GPA", f"{avg_gpa:.2f}/10")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown(f'''
+                <div class="metric-card fade-in">
+                    <div style="text-align: center;">
+                        <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">AVG GPA</p>
+                        <h2 style="color: #8b5cf6; font-size: 2.5rem; font-weight: 800; margin: 0;">{avg_gpa:.2f}/10</h2>
+                    </div>
+                </div>
+            ''', unsafe_allow_html=True)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -484,34 +770,31 @@ if page == "🏠 Dashboard":
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             # Risk Distribution Pie
-            risk_counts = df['disengaged'].value_counts()
+            risk_counts = df['dropout'].value_counts()
             fig = go.Figure(data=[go.Pie(
                 labels=['Safe', 'At Risk'],
                 values=[risk_counts.get(0, 0), risk_counts.get(1, 0)],
                 hole=0.5,
                 marker=dict(colors=['#10b981', '#ef4444'], 
-                           line=dict(color='white', width=3)),
-                textfont=dict(size=16, color='white', family='Arial Black'),
+                           line=dict(color='rgba(30, 41, 59, 0.5)', width=3)),
+                textfont=dict(size=16, color='#e2e8f0', family='Arial Black'),
                 pull=[0.05, 0.1]
             )])
             fig.update_layout(
                 title={'text': "Student Risk Distribution", 'x': 0.5, 'xanchor': 'center',
-                      'font': {'size': 20, 'color': '#1e293b', 'family': 'Arial Black'}},
+                      'font': {'size': 20, 'color': '#e2e8f0', 'family': 'Arial Black'}},
                 showlegend=True,
-                legend=dict(font=dict(size=14)),
+                legend=dict(font=dict(size=14, color='#e2e8f0')),
                 height=400,
-                paper_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(30, 41, 59, 0.7)',
                 plot_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, width="stretch")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.plotly_chart(fig, use_container_width=True)
         
         with col2:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             # Department Analysis
-            dept_data = df.groupby('department')['disengaged'].agg(['sum', 'count']).reset_index()
+            dept_data = df.groupby('department')['dropout'].agg(['sum', 'count']).reset_index()
             dept_data['safe'] = dept_data['count'] - dept_data['sum']
             
             fig = go.Figure()
@@ -522,47 +805,45 @@ if page == "🏠 Dashboard":
             
             fig.update_layout(
                 title={'text': "Risk by Department", 'x': 0.5, 'xanchor': 'center',
-                      'font': {'size': 20, 'color': '#1e293b', 'family': 'Arial Black'}},
+                      'font': {'size': 20, 'color': '#e2e8f0', 'family': 'Arial Black'}},
                 barmode='stack',
                 xaxis_title="Department",
                 yaxis_title="Students",
-                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(color='#e2e8f0')),
                 height=400,
-                paper_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(30, 41, 59, 0.7)',
                 plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(size=12)
+                font=dict(size=12, color='#e2e8f0')
             )
-            st.plotly_chart(fig, width="stretch")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.plotly_chart(fig, use_container_width=True)
         
         # Charts Row 2
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             # Attendance vs Risk
             fig = go.Figure()
             for risk, color, name in [(0, '#10b981', 'Safe'), (1, '#ef4444', 'At Risk')]:
-                data = df[df['disengaged'] == risk]['attendance_rate']
+                data = df[df['dropout'] == risk]['attendance_rate']
                 fig.add_trace(go.Box(y=data, name=name, marker_color=color,
                                     boxmean='sd'))
             
             fig.update_layout(
                 title={'text': "Attendance Distribution by Risk", 'x': 0.5, 'xanchor': 'center',
-                      'font': {'size': 20, 'color': '#1e293b', 'family': 'Arial Black'}},
+                      'font': {'size': 20, 'color': '#e2e8f0', 'family': 'Arial Black'}},
                 yaxis_title="Attendance %",
                 height=400,
-                paper_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(30, 41, 59, 0.7)',
                 plot_bgcolor='rgba(0,0,0,0)',
-                showlegend=True
+                showlegend=True,
+                font=dict(color='#e2e8f0'),
+                legend=dict(font=dict(color='#e2e8f0'))
             )
-            st.plotly_chart(fig, width="stretch")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.plotly_chart(fig, use_container_width=True)
         
         with col2:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             # Age-wise Risk
-            age_data = df.groupby('age')['disengaged'].agg(['sum', 'count']).reset_index()
+            age_data = df.groupby('age')['dropout'].agg(['sum', 'count']).reset_index()
             age_data['percentage'] = (age_data['sum'] / age_data['count']) * 100
             age_data = age_data.sort_values('age')
             
@@ -579,15 +860,15 @@ if page == "🏠 Dashboard":
             
             fig.update_layout(
                 title={'text': "At-Risk % by Age", 'x': 0.5, 'xanchor': 'center',
-                      'font': {'size': 20, 'color': '#1e293b', 'family': 'Arial Black'}},
+                      'font': {'size': 20, 'color': '#e2e8f0', 'family': 'Arial Black'}},
                 xaxis_title="Age",
                 yaxis_title="At-Risk Percentage",
                 height=400,
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)'
+                paper_bgcolor='rgba(30, 41, 59, 0.7)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#e2e8f0')
             )
-            st.plotly_chart(fig, width="stretch")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.plotly_chart(fig, use_container_width=True)
         
     else:
         st.error("⚠️ Please run the setup scripts first!")
@@ -596,9 +877,11 @@ if page == "🏠 Dashboard":
 # Students Page
 elif page == "👥 Students":
     st.markdown('<h1 class="gradient-text fade-in">Student Management</h1>', unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     
     if df is not None:
         # Filters
+        st.markdown('<div class="info-card"><h3 style="margin-top: 0;">Filter Students</h3></div>', unsafe_allow_html=True)
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
@@ -610,12 +893,14 @@ elif page == "👥 Students":
         with col4:
             search = st.text_input("🔍 Search", placeholder="Student ID")
         
+        st.markdown("<br>", unsafe_allow_html=True)
+        
         # Apply filters
         filtered_df = df.copy()
         if risk_filter == "At Risk":
-            filtered_df = filtered_df[filtered_df['disengaged'] == 1]
+            filtered_df = filtered_df[filtered_df['dropout'] == 1]
         elif risk_filter == "Safe":
-            filtered_df = filtered_df[filtered_df['disengaged'] == 0]
+            filtered_df = filtered_df[filtered_df['dropout'] == 0]
         
         if dept_filter != "All":
             filtered_df = filtered_df[filtered_df['department'] == dept_filter]
@@ -626,17 +911,96 @@ elif page == "👥 Students":
                 filtered_df['student_id'].astype(str).str.contains(search, case=False)
             ]
         
+        # File Upload Section - Full Width Above Showing Students
+        st.markdown("""
+            <div style='background: rgba(139, 92, 246, 0.2); padding: 1rem; border-radius: 12px; border: 2px solid rgba(139, 92, 246, 0.5); margin-bottom: 1rem;'>
+                <h4 style='color: #a78bfa; margin: 0 0 0.5rem 0; font-size: 1rem;'>📁 Upload New Batch</h4>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        uploaded_file = st.file_uploader("", type=['xlsx', 'xls', 'csv'], help="Upload Excel or CSV file with student data", label_visibility="collapsed")
+        
+        if uploaded_file is not None:
+            model, df_default, scaler, features = load_model_and_data()
+            
+            if model is not None and scaler is not None and features is not None:
+                # Check if file is already processed
+                if 'processed_file_name' not in st.session_state or st.session_state.get('processed_file_name') != uploaded_file.name:
+                    with st.spinner('Processing uploaded data...'):
+                        df_processed, error, stats = process_uploaded_data(uploaded_file, model, scaler, features)
+                        
+                        if error:
+                            st.error(f"❌ Error: {error}")
+                            st.session_state.temp_processed_df = None
+                            st.session_state.processed_file_name = None
+                            st.session_state.upload_stats = None
+                        else:
+                            st.session_state.temp_processed_df = df_processed
+                            st.session_state.processed_file_name = uploaded_file.name
+                            st.session_state.upload_stats = stats
+                            
+                            # Save processed file
+                            output_path = DATA_DIR / 'processed' / f'uploaded_{uploaded_file.name.replace(".xlsx", ".csv").replace(".xls", ".csv")}'
+                            df_processed.to_csv(output_path, index=False)
+                            
+                            # Display processing information
+                            st.success(f"✅ File processed successfully!")
+                            
+                            # Show model and processing details
+                            st.markdown("""
+                                <div style='background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.3); margin: 1rem 0;'>
+                                    <h4 style='color: #10b981; margin: 0 0 0.5rem 0;'>🤖 Model Processing Complete</h4>
+                                    <p style='color: #e2e8f0; margin: 0; font-size: 0.9rem;'>
+                                        <strong>Algorithm:</strong> Random Forest Classifier<br>
+                                        <strong>Data Filtered:</strong> Yes (Preprocessed with feature engineering)<br>
+                                        <strong>Features Used:</strong> Academic score, Engagement score, Risk indicators
+                                    </p>
+                                </div>
+                            """, unsafe_allow_html=True)
+                            
+                            # Display statistics
+                            col1, col2, col3 = st.columns(3)
+                            with col1:
+                                st.metric("📊 Total Students", f"{stats['total_students']:,}")
+                            with col2:
+                                st.metric("🔴 At Risk", f"{stats['at_risk']}", f"{(stats['at_risk']/stats['total_students']*100):.1f}%")
+                            with col3:
+                                st.metric("🟢 Safe", f"{stats['safe']}", f"{(stats['safe']/stats['total_students']*100):.1f}%")
+                            
+                            st.info(f"📁 Saved to: `{output_path.name}`")
+                
+                # Show proceed button if file is processed
+                if st.session_state.get('temp_processed_df') is not None:
+                    col1, col2, col3 = st.columns([1, 2, 1])
+                    with col2:
+                        if st.button("✨ Proceed & Update Statistics", type="primary", use_container_width=True):
+                            st.session_state.uploaded_df = st.session_state.temp_processed_df
+                            st.session_state.data_source = 'uploaded'
+                            st.session_state.temp_processed_df = None
+                            st.session_state.processed_file_name = None
+                            st.success("🎉 Statistics updated with new data!")
+                            st.rerun()
+            else:
+                st.error("Model not loaded. Please train the model first!")
+        
+        if st.session_state.data_source == 'uploaded' and st.session_state.uploaded_df is not None:
+            col1, col2 = st.columns([4, 1])
+            with col2:
+                if st.button("🔄 Use Default Data", use_container_width=True):
+                    st.session_state.uploaded_df = None
+                    st.session_state.data_source = 'default'
+                    st.rerun()
+        
         st.markdown(f'<div class="info-card">Showing <strong>{len(filtered_df)}</strong> students</div>', 
                    unsafe_allow_html=True)
         
-        # Display table
+        # Display table (use 'dropout' as the target column)
         display_df = filtered_df[['student_id', 'department', 'age', 
                                    'attendance_rate', 'cgpa', 
-                                   'past_failures', 'disengaged']].copy()
-        display_df['Status'] = display_df['disengaged'].apply(lambda x: '🔴 At Risk' if x == 1 else '🟢 Safe')
-        display_df = display_df.drop('disengaged', axis=1)
+                                   'past_failures', 'dropout']].copy()
+        display_df['Status'] = display_df['dropout'].apply(lambda x: '🔴 At Risk' if x == 1 else '🟢 Safe')
+        display_df = display_df.drop('dropout', axis=1)
         
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
         st.dataframe(
             display_df.style.format({
                 'attendance_rate': '{:.1f}%',
@@ -644,9 +1008,8 @@ elif page == "👥 Students":
                 'past_failures': '{:.0f}'
             }),
             height=400,
-            width="stretch"
+            use_container_width=True
         )
-        st.markdown('</div>', unsafe_allow_html=True)
         
         # Student details
         st.markdown("---")
@@ -678,7 +1041,7 @@ elif page == "👥 Students":
                     with col2:
                         st.markdown('<div class="metric-card">', unsafe_allow_html=True)
                         fig = create_gauge_chart(risk_prob, "Risk Score")
-                        st.plotly_chart(fig, width="stretch")
+                        st.plotly_chart(fig, use_container_width=True)
                         st.markdown('</div>', unsafe_allow_html=True)
                     
                     with col3:
@@ -749,7 +1112,7 @@ elif page == "🎯 Prediction":
         with col2:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             fig = create_gauge_chart(risk_score)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
         
         with col3:
@@ -768,7 +1131,7 @@ elif page == "📊 Analytics":
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             st.subheader("Department Statistics")
             dept_stats = df.groupby('department').agg({
-                'disengaged': ['sum', 'count', 'mean']
+                'dropout': ['sum', 'count', 'mean']
             }).round(3)
             dept_stats.columns = ['At Risk', 'Total', 'Risk Rate']
             st.dataframe(dept_stats, width="stretch")
@@ -783,11 +1146,11 @@ elif page == "📊 Analytics":
             with col2:
                 feat2 = st.selectbox("Feature 2", numeric_cols, index=1)
             
-            fig = px.scatter(df, x=feat1, y=feat2, color='disengaged',
+            fig = px.scatter(df, x=feat1, y=feat2, color='dropout',
                            color_discrete_map={0: '#10b981', 1: '#ef4444'},
                            title=f"{feat1} vs {feat2}")
             fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
         
         with tab3:
@@ -823,8 +1186,3 @@ elif page == "💬 AI Assistant":
 
 # Footer
 st.markdown("---")
-st.markdown("""
-    <div style='text-align: center; color: white; padding: 2rem;'>
-        <p style='font-size: 0.9rem;'>Built with ❤️ for Student Success | Powered by AI</p>
-    </div>
-""", unsafe_allow_html=True)

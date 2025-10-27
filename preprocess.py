@@ -8,7 +8,7 @@ from config import *
 print("🔧 Starting data preprocessing...")
 
 # Load the real dataset
-df = pd.read_csv(r"c:\Users\darsh\Downloads\Dataset - Dataset.csv")
+df = pd.read_csv(r"Dataset - Dat.csv")
 print(f"✓ Loaded {len(df)} records")
 
 # Data cleaning
@@ -86,21 +86,23 @@ for col in categorical_cols:
 print(f"✓ Encoded categorical features")
 
 # Prepare target variable (dropout)
-df['disengaged'] = df['dropout']  # Rename for consistency
+# Keep 'dropout' as the canonical target name used in training
+# (do not create a separate 'disengaged' column)
 
 # Save cleaned data
 df.to_csv(CLEANED_DATA_FILE, index=False)
 print(f"✓ Saved cleaned data to: {CLEANED_DATA_FILE}")
 
 # Prepare features for modeling
-exclude_cols = ['student_id', 'dropout', 'disengaged', 'gender', 'department', 
+exclude_cols = ['student_id', 'dropout', 'gender', 'department', 
                 'scholarship', 'parental_education', 'extra_curricular', 
                 'sports_participation']
+
 
 feature_cols = [col for col in df.columns if col not in exclude_cols]
 
 X = df[feature_cols]
-y = df['disengaged']
+y = df['dropout']
 
 # Scale numeric features
 scaler = StandardScaler()
